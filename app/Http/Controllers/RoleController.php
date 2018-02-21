@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 
 use App\Role;
 use App\Permission;
-use DB;
 
 class RoleController extends Controller
 {
@@ -23,13 +22,24 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     *  @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
 
-        $roles = Role::get();
-         return  $roles;
+        $roles = Role::orderBy('id', 'DESC')->paginate(2);
+
+        return [
+            'pagination' => [
+                'total'         => $roles->total(),
+                'current_page'  => $roles->currentPage(),
+                'per_page'      => $roles->perPage(),
+                'last_page'     => $roles->lastPage(),
+                'from'          => $roles->firstItem(),
+                'to'            => $roles->lastPage(),
+            ],
+            'roles' => $roles
+        ];
     }
     /**
      * Show the form for creating a new resource.
@@ -38,14 +48,15 @@ class RoleController extends Controller
      */
     public function create()
     {
-    	/*
+    	
         $permissions = Permission::pluck('display_name','id');
-        return view('roles.create',compact('permissions')); //return the view with the list of permissions passed as an array*/
+        return view('roles.create',compact('permissions')); //return the view with the list of permissions passed as 
     }
     /**
      * Store a newly created resource in storage.
      *
-     * @return Response
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {/*
