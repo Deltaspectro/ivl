@@ -20,5 +20,12 @@ Route::get('/roles', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::post('roles/store','RoleController@store')->name('roles/store');
+Route::get('permiso','PermissionController@index')->name('permiso');
+Route::get('permisos/view','PermissionController@view')->name('permisos/view');
+Route::post('permisos/create','PermissionController@create')->name('permisos/create');
+Route::get('permisos/obtener','PermissionController@obtener')->name('permisos/obtener');
 
 Route::resource('role','RoleController',['except'=>'show']);
+
+

@@ -42,6 +42,11 @@ class RoleController extends Controller
         ];
     }
     /**
+     * Display a listing of the resource.
+     *
+     *  @return \Illuminate\Http\Response
+     */
+    /**
      * Show the form for creating a new resource.
      *
      * @return Response
@@ -49,8 +54,8 @@ class RoleController extends Controller
     public function create()
     {
     	
-        $permissions = Permission::pluck('display_name','id');
-        return view('roles.create',compact('permissions')); //return the view with the list of permissions passed as 
+        $permissions = Permission::get();
+        return $permissions;
     }
     /**
      * Store a newly created resource in storage.
@@ -59,20 +64,42 @@ class RoleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {/*
-        $this->validate($request, [
-            'name' => 'required|unique:roles,name',
-            'display_name' => 'required',
-            'description' => 'required',
-            'permissions' => 'required',
-        ]);
-        //create the new role
+    {   
+        
+        
+        
+        
+        try{
+            //create the new role
         $role = new Role();
-        $role->name = $request->input('name');
-        $role->display_name = $request->input('display_name');
-        $role->description = $request->input('description');
+        $role->name =$request->name;
+        $role->display_name =$request->display_name;
+        $role->description =$request->description;
         $role->save();
+        foreach ($request->permisos as $key => $value) {
+            $role->attachPermission($value);
+        }
+        return "exito";
+
+        }catch(\Exception $e){
+            return $e;
+        }
+
+
+
+
+        /*
+        Role::create([
+            'name' =>'teste',
+            'display_name' =>'pruebas',
+            'description' =>'nuevo test'
+        ]);
+        */
+
+
+
         //attach the selected permissions
+        /*
         foreach ($request->input('permissions') as $key => $value) {
             $role->attachPermission($value);
         }
@@ -121,6 +148,9 @@ class RoleController extends Controller
                 ->toArray();
         return view('roles.edit',compact('role','permissions','rolePermissions'));
         */
+        $permission = Permission::get();
+        $rolePermissions = DB::table("permission_role")->where("permission_role.role_id",$id)
+            ->lists('permission_role.permission_id','permission_role.permission_id');
     }
     /**
      * Update the specified resource in storage.
